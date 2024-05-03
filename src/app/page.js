@@ -10,7 +10,7 @@ export default function Home() {
 
     // second component is where clicking on an individual entry will display it,
     // including its emotion details 
-    
+    // page 
     <main className={styles.main}>
 
       <Split>

@@ -1,3 +1,5 @@
+"use client";
+
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import { Link, useNavigate } from 'react-router-dom'; 
@@ -10,7 +12,7 @@ function SignUp() {
     const [password, setPassword] = useState("");
     const navigate = useNavigate(); 
 
-    // login sends POST request to backend /acount/login
+    //login sends POST request to backend /acount/login
     // link that, once clicked, sends user to /signup page 
 
     // successful log in => go to home page

@@ -18,8 +18,10 @@
     "mongoose": "^8.3.3",
     "next": "14.2.3",
     "react": "^18",
+    "react-bootstrap": "^2.10.2",
     "react-dom": "^18",
-    "react-split": "^2.0.14"
+    "react-split": "^2.0.14",
+    "swr": "^2.2.5"
   },
   "devDependencies": {
     "@types/cookie-session": "^2.0.49",

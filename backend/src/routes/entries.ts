@@ -11,7 +11,7 @@ const router = express.Router();
 // route for ADDING an entry 
 // must be logged in to add journal entry 
 router.post('/add', requireAuth, async (req, res, next) => {
-    
+
     const {entryTitle, entryText} = req.body; 
 
     // receive from the request the question details 
@@ -43,6 +43,7 @@ router.post('/add', requireAuth, async (req, res, next) => {
     try { 
         const newEntry = new JournalEntry({entryTitle, entryDate, entryText, author}); 
         await newEntry.save(); // save the entry in database
+        console.log(newEntry)
         // let user know it succeeded
         res.status(201).send({message: "Successfully added entry."})
     } catch (error) {
@@ -65,10 +66,20 @@ router.get('/fetch', async (req, res, next) => {
 }) 
 
 // router for getting emotion data for entry 
-// utilizes EDEN API 
-router.post('/analysis', async (req, res, next) => {
-    const {entryText} = req.body; 
+// utilizes EDEN API text sentiment analysis
+// https://app.edenai.run/bricks/text/sentiment-analysis 
 
+router.post('/analysis', async (req, res, next) => {
+
+    // need the id to be able to identify which post to add the emotion data to 
+    const {_id, entryText} = req.body; 
+
+    // url is url to which post request is sent 
+    // method specifies this is a post request 
+    // headers - set header to provide the authorization aka the API key needed by eden
+    // send the body of the post request
+    // providers specifies the sentiment analysis providers to use
+    // provide the actual text to analyze 
     const options = { 
         method: 'POST', 
         url: 'https://api.edenai.run/v2/text/sentiment_analysis',
@@ -76,18 +87,41 @@ router.post('/analysis', async (req, res, next) => {
             authorization: process.env.EDEN_API_KEY,
         }, 
         data: {
-            providers: 'ibm, google', 
+            providers: 'google', 
             // pass in user's journal entry text in to API 
             text: entryText,
             language: 'en'
         }
     }; 
 
+    // send the actual HTTP request in options object 
+    // axios is promise-based HTTP client for making requests from node.js
+    // using axios to interact with extenral API 
+    // wait for response, whci his either resolved or rejected
+    // if resolved, store in response variable
+    // if successful, give 200 ok 
+
+    
     try { 
+        
+        const entry = await JournalEntry.findById(_id); // need to use mongo's FindById method to search our questions to see if one matches specified id 
+
+        if (!entry) { 
+    // if we couldn't find the entry matching the id, then we need to return not found error 
+    return res.status(404).send({message: "Entry not found."});
+
+    }
         // receive response from eden API 
         const response = await axios.request(options); 
+
+        // // store emotion data ... but fix because we need to store only the string part to match the data type 
+        // entry.entryEmotion = response; 
+        // await entry.save(); // save changes to this entry in mongo 
+
         res.status(200).json(response.data); 
         // send data as json response 
+
+        // otherwise, catch error and pass into error handler 
     } catch (error) { 
         next(error); 
     }

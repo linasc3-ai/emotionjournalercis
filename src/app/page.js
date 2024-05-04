@@ -1,26 +1,25 @@
-import Image from "next/image";
-import styles from "./page.module.css";
-import Split from 'react-split';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import Home from './components/entryDisplay';
+import Login from './components/Login';
+import SignUp from './components/Signup';
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import './app.css';
 
-export default function Home() {
+function App() {
+
   return (
-    // have split screen view 
 
-    // first component will be the left hand side with past journal entries 
-
-    // second component is where clicking on an individual entry will display it,
-    // including its emotion details 
-    // page 
-    <main className="class">
-
-      <Split>
-        
-
-
-
-
-
-      </Split> 
-    </main>
+    <Router>
+      <div>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<SignUp />} />
+        </Routes>
+      </div>
+    </Router>
   );
 }
+
+export default App;

@@ -3,17 +3,19 @@
 import express from 'express';
 import JournalEntry from '../models/entry';
 import requireAuth from '../middlewares/require-auth'
-const axios = require('axios').default; // require axios for use with sentiment analysis API 
+import axios from 'axios';  // require axios for use with sentiment analysis API 
 
 // create router
 const router = express.Router(); 
 
 // route for ADDING an entry 
 // must be logged in to add journal entry 
-router.post('/entries/add', requireAuth, async (req, res, next) => {
+router.post('/add', requireAuth, async (req, res, next) => {
+    
+    const {entryTitle, entryText} = req.body; 
+
     // receive from the request the question details 
     // includes title, text 
-   
     // first make sure req.session isn't null before trying to access
     if (!req.session) {
         return res.status(401).send({message: "Session is not initialized"});
@@ -25,9 +27,7 @@ router.post('/entries/add', requireAuth, async (req, res, next) => {
         req.session.date = new Date().toISOString();  // Store the date when the journal entry is being created
       }
 
-    var entryDate = req.session.date
-
-    const {entryTitle, entryText} = req.body; 
+    const entryDate = req.session.date
 
     // get author from cookie session
     const author = req.session?.user?.username
@@ -53,7 +53,7 @@ router.post('/entries/add', requireAuth, async (req, res, next) => {
 
 
 // route for fetching all journal entries 
-router.get('/entries/', async (req, res, next) => {
+router.get('/fetch', async (req, res, next) => {
 
     try { 
         const entries = await JournalEntry.find({}); // pull anything that is of JournalEntry model 
@@ -66,7 +66,7 @@ router.get('/entries/', async (req, res, next) => {
 
 // router for getting emotion data for entry 
 // utilizes EDEN API 
-router.post('/entries/analysis', async (req, res, next) => {
+router.post('/analysis', async (req, res, next) => {
     const {entryText} = req.body; 
 
     const options = { 

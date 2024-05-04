@@ -37,7 +37,7 @@ app.use('/api/account', accountRoutes);
 
 const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
   console.error(err.stack); // provide stack trace for debugging 
-
+  
   // Check the type of error or use the error message to set the HTTP status code
   const statusCode = err.message.startsWith('Unauthorized') ? 401 : 500;
 

@@ -5,19 +5,24 @@ import axios from 'axios';
 import useSWR from 'swr';
 import EntryModal from "./addEntry"
 import React from 'react';
+import SentimentCard from './sentimentCard'
 
 interface JournalEntry {
   entryTitle: string;
-  date: string;
+  entryDate: Date;
   author: string;
+  general_sentiment: string; 
+  general_sentiment_rate: number; 
   entryText: string;
-  entryEmotion: {
-      items: Array<{
-          phrase: string;
-          sentiment: 'Positive' | 'Negative' | 'Neutral';
-      }>;
-  };
+  emotionData: EntryEmotionItem[];
 }
+
+interface EntryEmotionItem {
+  segment: string;
+  sentiment: 'Positive' | 'Negative' | 'Neutral';
+  sentiment_rate: number 
+}
+
 
 function Home() {
     // state for whether user is logged in or loggd out 
@@ -91,20 +96,20 @@ function Home() {
        // function to determine text color based on sentiment 
        const getColor = (sentiment) => {
         switch (sentiment) {
-          case 'Positive':
-            return '#28a745'; // Green
-          case 'Negative':
-            return '#dc3545'; // Red
-          case 'Neutral':
-            return '#ffc107'; // Yellow
-          default:
-            return '#6c757d'; // Grey
+            case 'Positive':
+                return 'green';
+            case 'Negative':
+                return 'red';
+            case 'Neutral':
+                return 'yellow';
+            default:
+                return 'black'; // Default color if no sentiment is detected
         }
-      };
+    };
 
     // handle clicking on card 
-    const handleCardClick = (question) => {
-        setDisplayedEntry(question); // update question to display based on click 
+    const handleCardClick = (entry) => {
+        setDisplayedEntry(entry); // update question to display based on click 
     }
 
   // eslint-disable-next-line unicorn/prefer-ternary
@@ -115,7 +120,7 @@ function Home() {
     <div className="header" style={{ 
       width: '100%', 
       padding: '20px', 
-      backgroundColor: '#A94064', 
+      backgroundColor: '#OA2472', 
       boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
       color: "white", 
       textAlign: 'center' 
@@ -142,29 +147,28 @@ function Home() {
           Add New Journal Entry 
         </Button>
 
+        <p> Click to view entry details. </p> 
 
         <div>
-      {data && data.length > 0 ? (
-        <ul style={{ listStyle: 'none', padding: 0 }}>
-          {data.map((entry) => (
-            <li key={entry.entryTitle + entry.entryDate} style={{ marginBottom: '10px' }}>
-              <div className="card" style={{ padding: '10px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
-                <h3>{entry.entryTitle}</h3>
-                <p>{new Date(entry.entryDate).toLocaleDateString()} - by {entry.author}</p>
-                <p>{entry.entryText}</p>
-                {entry.entryEmotion && JSON.parse(entry.entryEmotion).items.map((item, index) => (
-                  <p key={index} style={{ color: getColor(item.sentiment) }}>
-                    {item.phrase} - {item.sentiment}
-                  </p>
-                ))}
-              </div>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>No journal entries yet. Add a new journal entry to begin!</p>
-      )}
-    </div>
+         {data && data.length > 0 ? (
+                <ul style={{ listStyle: 'none', padding: 0 }}>
+                    {data.map((entry) => (
+                      // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions, jsx-a11y/no-noninteractive-element-interactions
+                        <li key={`${entry.entryTitle}-${entry.entryDate}`} style={{ marginBottom: '10px' }} onClick={() => handleCardClick(entry)}>
+                            <div className="card" style={{ padding: '10px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+                                <h3>{entry.entryTitle}</h3>
+                                <p>{new Date(entry.entryDate).toLocaleDateString()} - by {entry.author}</p>
+                                <div style={{ marginTop: '10px', fontWeight: 'bold' }}>
+                                <SentimentCard sentimentName={entry.general_sentiment} percentage={entry.general_sentiment_rate} color={getColor(entry.general_sentiment)} />
+                                </div>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            ) : (
+                <p>No journal entries yet. Add a new journal entry to begin!</p>
+            )}
+        </div>
 
         {/* only show the modal when state is true, also closing makes modal not show by setting state to false*/}
         <EntryModal
@@ -186,15 +190,24 @@ function Home() {
         
         {displayedEntry ? (
           <>
-            <div className="card" style={{ marginBottom: '20px' }}>
-              {/*first display overall emotion score*/}
-               {/*then display details of card color coded by sentiment*/} 
-              <h5 className="card-title">{displayedEntry.entryTitle}</h5>
-              <p><em>Author:</em> {displayedEntry.author}</p>
-              <p><em>Date:</em> {displayedEntry.date}</p>
-              <p>{displayedEntry.entryText}</p>
-              
-            </div> 
+             <div className="card" style={{ padding: '10px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+                                <h3>{displayedEntry.entryTitle}</h3>
+                                <p>{new Date(displayedEntry.entryDate).toLocaleDateString()} - by {displayedEntry.author}</p>
+                                
+                                <div style={{ marginTop: '10px' }}>
+                                <h5> <em> Written Entry </em> </h5> 
+                                {displayedEntry.emotionData && displayedEntry.emotionData.map((item, index) => (
+                                    <b key={index} style={{ color: getColor(item.sentiment) }}>
+                                        {item.segment} 
+                                    </b>
+                                ))}
+                                </div> 
+                                <div style={{ marginTop: '30px' }}>
+                                  <h5> <em> Overall Entry Sentiment </em> </h5> 
+                                  <p> This tells you how positive or negative this journal entry is! </p> 
+                                <SentimentCard sentimentName={displayedEntry.general_sentiment} percentage={displayedEntry.general_sentiment_rate} color={getColor(displayedEntry.general_sentiment)} />
+                                </div>
+                            </div>
           </>
         ) : "Click a question to view details."}
 
@@ -269,7 +282,6 @@ function Home() {
                         <div className="card">
                           <h5 className="card-title">{displayedEntry.entryTitle}</h5>
               <p><em>Author:</em> {displayedEntry.author}</p>
-              <p><em>Date:</em> {displayedEntry.date}</p>
               <p>{displayedEntry.entryText}</p>
                         </div>
                     ) : "Click a question to view details."}

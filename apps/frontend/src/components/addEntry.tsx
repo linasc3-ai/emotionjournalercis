@@ -7,26 +7,38 @@ interface EntryModalProps {
     handleClose: () => void;
   }
 
+
 const EntryModal: React.FC<EntryModalProps> = ({ show, handleClose }) => {
-  const [entry, setEntry] = useState("");
+  const [entryTextInfo, setEntryText] = useState("");
   const [entryTitle, setEntryTitle] = useState("");
 
   const submitEntry = (e) => {
     e.preventDefault();
 
-    // try to post question 
-    axios.post('/api/entries/add', { entryTitle: entryTitle, entryText: entry}).then(res => {
-      console.log(res); 
-      console.log(res.data);
-  }).catch(error => {
-      console.error('Error submitting entry!', error);
-      alert("Failed to submit entry. Please try again.");
-  });
+    // try to post a journal entry  
+    axios.post('/api/entries/add', { entryTitle: entryTitle, entryText: entryTextInfo })
+      .then(res => {
+        console.log(res.data);
+      
+        // perform analysis on emotion data using the id of the newly added object and the text of the actual journal entry 
+        return axios.post('/api/entries/analysis', { entryTitle: entryTitle, entryText: entryTextInfo });
+      })
+      .then(analysisRes => {
+        console.log(analysisRes.data);
+        // print the sentiment analysis data in the console 
+      })
+      .catch(error => {
+        console.error('Error submitting entry!', error);
+        // error handling 
+        alert("Failed to submit entry. Please try again.");
+      });
+
       // Close the modal after submission
       handleClose();
 
       // clear form for next user input 
-      setEntry('');
+      setEntryText('');
+      setEntryTitle('');
   }
 
   return (
@@ -49,10 +61,12 @@ const EntryModal: React.FC<EntryModalProps> = ({ show, handleClose }) => {
           <Form.Group className="mb-3" controlId="entryTitleInput">
             <Form.Label>Entry Text</Form.Label>
             <Form.Control
+              as="textarea" 
+              rows={8} 
               type="text"
               placeholder="Enter your journal entry here"
-              value={entry}
-              onChange={(e) => setEntry(e.target.value)}
+              value={entryTextInfo}
+              onChange={(e) => setEntryText(e.target.value)}
             />
           </Form.Group>
           <Button variant="primary" type="submit">

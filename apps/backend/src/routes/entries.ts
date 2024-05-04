@@ -45,7 +45,18 @@ router.post('/add', requireAuth, async (req, res, next) => {
         await newEntry.save(); // save the entry in database
         console.log(newEntry)
         // let user know it succeeded
-        res.status(201).send({message: "Successfully added entry."})
+
+        // send back all data after creating the new object
+        // we need to use the id in the analysis route 
+        res.status(201).send({
+            _id: newEntry._id,
+            entryTitle: newEntry.entryTitle,
+            entryText: newEntry.entryText,
+            entryDate: newEntry.entryDate,
+            author: newEntry.author,
+            message: "Successfully added entry."
+        });
+
     } catch (error) {
         // handle any errors
         next(error);
@@ -72,7 +83,7 @@ router.get('/fetch', async (req, res, next) => {
 router.post('/analysis', async (req, res, next) => {
 
     // need the id to be able to identify which post to add the emotion data to 
-    const {_id, entryText} = req.body; 
+    const {entryTitle, entryText} = req.body; 
 
     // url is url to which post request is sent 
     // method specifies this is a post request 
@@ -101,30 +112,33 @@ router.post('/analysis', async (req, res, next) => {
     // if resolved, store in response variable
     // if successful, give 200 ok 
 
-    
-    try { 
-        
-        const entry = await JournalEntry.findById(_id); // need to use mongo's FindById method to search our questions to see if one matches specified id 
+    try {
+        // Find the journal entry by _id
+        const entry = await JournalEntry.findOne({ entryTitle: entryTitle });
 
-        if (!entry) { 
-    // if we couldn't find the entry matching the id, then we need to return not found error 
-    return res.status(404).send({message: "Entry not found."});
+        // if no journal entry with that ID, send 404 error 
+        if (!entry) {
+            return res.status(404).send({ message: "Entry not found." });
+        }
 
+        // Send the request to the sentiment analysis API
+        const response = await axios.request(options);
+
+        if (response.data) {
+            // Update the entry with the sentiment analysis data
+            entry.general_sentiment = response.data.google.general_sentiment; 
+            entry.general_sentiment_rate = response.data.google.general_sentiment_rate;
+            entry.emotionData = response.data.google.items;
+              
+            await entry.save(); // Save the updated entry
+            res.status(200).json(entry); // Respond with the updated entry data and send 200 status code 
+        } else {
+            res.status(500).send({ message: "Failed to store analyzed sentiment." });
+        }
+    } catch (error) {
+        console.error("Failed to process sentiment analysis:", error);
+        next(error); // Pass the error to the next middleware error handler 
     }
-        // receive response from eden API 
-        const response = await axios.request(options); 
-
-        // // store emotion data ... but fix because we need to store only the string part to match the data type 
-        // entry.entryEmotion = response; 
-        // await entry.save(); // save changes to this entry in mongo 
-
-        res.status(200).json(response.data); 
-        // send data as json response 
-
-        // otherwise, catch error and pass into error handler 
-    } catch (error) { 
-        next(error); 
-    }
-}); 
+});
 
 export default router;

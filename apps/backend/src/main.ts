@@ -15,7 +15,7 @@ const PORT = 8000;
 // initialize express app 
 const app = express(); 
 
-const cors = require('cors');
+import cors from 'cors';
 app.use(cors());
 
 app.use(express.json()) // add body-parser middleware to server using app.use (aka middleware keyword) and express.json() for the specific body-parser functionality 
@@ -49,16 +49,17 @@ const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
 
 app.use(errorHandler);
  
-    const dbUsername = encodeURIComponent(process.env.DB_USERNAME!);
-    const dbPassword = encodeURIComponent(process.env.DB_PASSWORD!);
-    const dbClusterUrl = process.env.DB_CLUSTER_URL;
-    const dbName = process.env.DB_NAME;
+const dbUsername = encodeURIComponent(process.env.DB_USERNAME!);
+const dbPassword = encodeURIComponent(process.env.DB_PASSWORD!);
+const dbClusterUrl = process.env.DB_CLUSTER_URL;
+const dbName = process.env.DB_NAME;
   
 // connect to database
 const startServer = async() => {
   try { 
     // connect to mongo DB using URI 
-  await mongoose.connect(`mongodb+srv://${dbUsername}:${dbPassword}@${dbClusterUrl}/?retryWrites=true&w=majority&appName=${dbName}`);
+    const uri = `mongodb+srv://${dbUsername}:${dbPassword}@${dbClusterUrl}/${dbName}?retryWrites=true&w=majority`;
+    await mongoose.connect(uri);
   console.log("Connected"); 
 
   // listen only after you've established the database connection 

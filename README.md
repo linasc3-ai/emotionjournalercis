@@ -1,36 +1,43 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Full-stack app template
 
-## Getting Started
+This template provides boilerplate code for a full-stack TypeScript application using Vite with React and express.
 
-First, run the development server:
+It is configured as a monorepo using [npm workspaces](https://docs.npmjs.com/cli/v7/using-npm/workspaces), so packages can share dependencies in one big `node_modules` folder instead of having duplicates. It uses [turborepo](https://turbo.build/repo) for pipeline, so you can just run one `npm run dev` to run both a backend and frontend dev server.
 
-```bash
+# Development
+
+To get started, first run `npm i` to install dependencies.
+
+To start development servers in parallel, run:
+
+```sh
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+To scan your codebase with our ESLint config, run:
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+```sh
+npm run lint
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+# Communicating between ends
 
-## Learn More
+We've configured Vite's dev server to use a [proxy](https://vitejs.dev/config/server-options.html#server-proxy) at `/api`, which points at the default backend dev URL (also at `/api`).
 
-To learn more about Next.js, take a look at the following resources:
+This means, in development, you can (for example) make a request to a route defined on the backend at `http://localhost:8000/api/user` by hitting `/api/user`, which would otherwise just be `http://localhost:3000/api/user`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+This mirrors what larger projects do in production, putting the backend at the same URL under some extra path or subdomain. It also eliminates a lot of extra URL manipulation work or [CORS problems](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS/Errors) you could otherwise encounter.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+# Advanced usage: sharing types between ends
 
-## Deploy on Vercel
+If you define types in `apps/backend` you want to use in your frontend – especially useful for building typesafe routes – you can add this line in your frontend `package.json`, in `devDependencies`:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```json
+"backend": "*"
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+This allows you to easliy import types, i.e.:
+
+```ts
+import type { RouteBody } from 'backend/src/types';
+```

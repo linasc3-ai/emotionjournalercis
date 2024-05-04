@@ -1,4 +1,10 @@
-// cooke session powered authentication of username 
+// install cookie-session 
+// can help us access session associated with the request 
+// handles session data on client side using cookies ... gives us way to not have to store the session details on the server 
+// executed before HTTP request handled by route handler 
+// you have a HTTP request (e.g. post), give it to a route to handle 
+// before that, execute middlewares 
+// routes can result in changes to the database entries 
 
 import { Request, Response, NextFunction } from 'express';
 

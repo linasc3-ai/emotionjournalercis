@@ -1,5 +1,5 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Home from './components/entryDisplay';
+import Home from './components/Home';
 import Login from './components/Login';
 import SignUp from './components/SignUp';
 import React from 'react';

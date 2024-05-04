@@ -1,7 +1,4 @@
-"use client";
-
 import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
 import { useNavigate } from 'react-router-dom'; 
 import { useState, useEffect } from 'react';
 import axios from 'axios';
@@ -9,12 +6,25 @@ import useSWR from 'swr';
 import EntryModal from "./addEntry"
 import React from 'react';
 
+interface JournalEntry {
+  entryTitle: string;
+  date: string;
+  author: string;
+  entryText: string;
+  entryEmotion: {
+      items: Array<{
+          phrase: string;
+          sentiment: 'Positive' | 'Negative' | 'Neutral';
+      }>;
+  };
+}
+
 function Home() {
     // state for whether user is logged in or loggd out 
     const [loggedIn, setLoggedIn] = useState(false)
 
     // only one question will be selected at any given time for display, so add state 
-    const [displayedEntry, setDisplayedEntry] = useState(null)
+    const [displayedEntry, setDisplayedEntry] = useState<JournalEntry | null>(null);
 
     // state for whether to show modal
     const [showModal, setModalShow] = useState(false);
@@ -97,6 +107,7 @@ function Home() {
         setDisplayedEntry(question); // update question to display based on click 
     }
 
+  // eslint-disable-next-line unicorn/prefer-ternary
   if (loggedIn) { 
     return (
     <> 

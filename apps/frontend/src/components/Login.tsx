@@ -1,34 +1,27 @@
-"use client";
-
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import { Link, useNavigate } from 'react-router-dom'; 
 import { useState } from 'react';
 import axios from 'axios';
-import React from 'react';
 
-function SignUp() {
+
+function Login() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate(); 
 
-    //login sends POST request to backend /acount/login
-    // link that, once clicked, sends user to /signup page 
-
-    // successful log in => go to home page
-    // failed to log in => alert and remain on login 
+   // update for log in 
 
     const handleSubmit = event => {
         event.preventDefault(); 
         
         // format user in object database expects 
         const user = {
-            username, 
-            password, 
-            logStatus: true
+            username: username, 
+            password: password
         };
 
-        axios.post("/api/account/signup", user) // send post request to add new user to database 
+        axios.post("/api/account/login", user) // send post request with username and password to attempt to log in 
             .then(res => {
                 console.log(res); 
                 console.log(res.data);
@@ -38,15 +31,15 @@ function SignUp() {
             .catch(error => {
                 // alert if failed 
                 console.error('There was an error!', error);
-                alert("Failed to sign up. Please try again.");
+                alert("Failed to log in. Please try again.");
             });
 
 
     }
 
   return (
-    <div className="SignUp" style={{backgroundColor: "#e75480", padding: '500px', color: "white"}}> 
-    <><h1 style={{padding: "15px"}}> Sign Up </h1>
+    <div className="Login" style={{backgroundColor: "#e75480", padding: '500px', color: "white"}}> 
+    <><h1 style={{marginBottom: '10px'}}> Log In </h1>
     <Form onSubmit={handleSubmit}>
           <Form.Group className="mb-3" controlId="formBasicEmail">
               <Form.Label>Username:</Form.Label>
@@ -59,15 +52,15 @@ function SignUp() {
           </Form.Group>
 
           <Button variant="primary" type="submit">
-              Sign Up
+              Log in
           </Button>
 
-          <p style={{padding: '10px'}}> Already have an account? </p>
-          <Link to="/login" style={{color: "blue"}}>Sign in here.</Link>
+          <p style={{marginTop: "10px"}}> Do not have an account? </p>
+          <Link to="/signup" style={{color: "blue"}}>Sign up here.</Link>
 
       </Form></>
       </div> 
   );
 }
 
-export default SignUp;
+export default Login;

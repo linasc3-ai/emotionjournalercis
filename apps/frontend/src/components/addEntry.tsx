@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import axios from 'axios';
@@ -44,7 +42,7 @@ const EntryModal: React.FC<EntryModalProps> = ({ show, handleClose }) => {
               type="text"
               placeholder="Enter your journal entry title here"
               value={entryTitle}
-              onChange={(e) => setEntry(e.target.value)}
+              onChange={(e) => setEntryTitle(e.target.value)}
             />
           </Form.Group>
 

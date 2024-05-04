@@ -6,6 +6,9 @@ import useSWR from 'swr';
 import EntryModal from "./addEntry"
 import React from 'react';
 import SentimentCard from './sentimentCard'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBook } from '@fortawesome/free-solid-svg-icons';
+import SentimentCountCard from "./sentimentCount"
 
 interface JournalEntry {
   entryTitle: string;
@@ -116,18 +119,20 @@ function Home() {
   if (loggedIn) { 
     return (
     <> 
- <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', alignItems: 'center', backgroundColor: "pink" }}>
+ <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', alignItems: 'center', backgroundColor: "lightblue" }}>
     <div className="header" style={{ 
       width: '100%', 
       padding: '20px', 
-      backgroundColor: '#OA2472', 
+      backgroundColor: '#0A2472', 
       boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
       color: "white", 
       textAlign: 'center' 
     }}>
-      <h1 style={{ margin: 0 }}>MoodScribe</h1>
-      <h3> Your all-in-one emotion journaling app </h3> 
-      <h2> Hi {usersName}! </h2> 
+       <h1 style={{ margin: 0 }}>
+       <FontAwesomeIcon icon={faBook} /> MoodScribe 
+    </h1>
+      <h4 style={{padding: "20px"}}> Your all-in-one emotion journaling app. </h4> 
+      <h5> Hi {usersName}! </h5> 
       <Button variant="primary" onClick={handleLogOut} style={{ marginTop: '10px' }}>
         Log Out
       </Button>
@@ -211,6 +216,9 @@ function Home() {
           </>
         ) : "Click a question to view details."}
 
+      {/* also in right pane, let's display chart of emotions over time */}
+    <SentimentCountCard />
+
     </div> 
     </div> 
     </div> 
@@ -221,7 +229,7 @@ function Home() {
   } else { // user is logged out
     return (
     <>
-   <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', alignItems: 'center', backgroundColor: "pink" }}>
+   <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', alignItems: 'center', backgroundColor: "lightblue" }}>
     <div className="header" style={{ 
       width: '100%', 
       padding: '20px', 
@@ -230,8 +238,10 @@ function Home() {
       color: "white", 
       textAlign: 'center' 
     }}>
-        <h1 style={{ margin: 0 }}>MoodScribe</h1>
-      <h3> Your all-in-one emotion journaling app </h3> 
+       <h1 style={{ margin: 0 }}>
+       <FontAwesomeIcon icon={faBook} /> MoodScribe 
+    </h1>
+    <h4 style={{padding: "20px"}}> Your all-in-one emotion journaling app. </h4> 
       </div> 
 
       <div style={{ 

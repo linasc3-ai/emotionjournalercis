@@ -141,4 +141,24 @@ router.post('/analysis', async (req, res, next) => {
     }
 });
 
+// new route to streamline process of getting counts of each type of emotion 
+router.get('/sentiment-count', async (req, res, next) => {
+    try {
+        // use built in count documents in mongo to count number of entries for each of the 3 sentiment categories 
+        const positiveCount = await JournalEntry.countDocuments({ general_sentiment: 'Positive' });
+        const negativeCount = await JournalEntry.countDocuments({ general_sentiment: 'Negative' });
+        const neutralCount = await JournalEntry.countDocuments({ general_sentiment: 'Neutral' });
+
+        // send this data back to frontend 
+        res.status(200).json({
+            positive: positiveCount,
+            negative: negativeCount,
+            neutral: neutralCount
+        });
+    } catch (error) {
+        console.error('Error getting sentiment counts:', error);
+        next(error);
+    }
+});
+
 export default router;

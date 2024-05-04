@@ -3,7 +3,7 @@
 import express from 'express';
 import JournalEntry from '../models/entry';
 import requireAuth from '../middlewares/require-auth'
-import axios from 'axios';  // require axios for use with sentiment analysis API 
+import axios, { AxiosRequestConfig } from 'axios'; // require axios for use with sentiment analysis API 
 
 // create router
 const router = express.Router(); 
@@ -80,19 +80,19 @@ router.post('/analysis', async (req, res, next) => {
     // send the body of the post request
     // providers specifies the sentiment analysis providers to use
     // provide the actual text to analyze 
-    const options = { 
-        method: 'POST', 
+    const options: AxiosRequestConfig = {
+        method: 'POST',
         url: 'https://api.edenai.run/v2/text/sentiment_analysis',
         headers: {
-            authorization: process.env.EDEN_API_KEY,
-        }, 
+            authorization: process.env.EDEN_API_KEY ?? '',
+        },
         data: {
-            providers: 'google', 
-            // pass in user's journal entry text in to API 
+            providers: ['google'],  
+            // pass in users journal entry to API 
             text: entryText,
             language: 'en'
         }
-    }; 
+    };
 
     // send the actual HTTP request in options object 
     // axios is promise-based HTTP client for making requests from node.js

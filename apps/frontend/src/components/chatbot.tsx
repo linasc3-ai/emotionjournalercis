@@ -23,10 +23,11 @@ function Chatbot() {
     const [sessionCount, setCount] = useState(0);
 
     const routeChange = () => {
-        setCount(sessionCount+1) // update the count 
+        const newCount = sessionCount + 1;  // Calculate the new count first
+    setCount(newCount);
+        // setCount(sessionCount+1) // update the count 
         navigate("/", {state: sessionCount}) // send count back so we can display it 
     }
-
 
     const { data, error, isValidating } = useSWR('/api/entries/fetch', fetcher, { revalidateOnFocus: false });
 
@@ -42,7 +43,7 @@ function Chatbot() {
     //     position: "single"
     // }]) // messages stored in array 
 
-    const apiKey = "sk-proj-pfQlTgSMStaSK907DKzsT3BlbkFJB0e4gZnmA0DRarWOF1zO"
+    const apiKey = "sk-proj-gKQAIgiuVYYkf6bWhXIlT3BlbkFJ6Kkc1Z3qG6S9qMqM8eqs"
     const [typing, setTyping] = useState(false)
 
     // wait for message 
@@ -153,7 +154,7 @@ function Chatbot() {
     // every message in array gets message component 
     // when user submits message, call handleSend 
     return (
-    <div style={{position: "relative", height: "800px", width: "700px"}}>
+    <div style={{position: "relative", height: "1000px", width: "1000px", backgroundColor: "lightblue", padding: "20px"}}>
         <h2> Welcome to Moodbot! </h2> 
         <p> Moodbot is here to help you better reflect on what you have written in your journal entries. </p> 
         <p> Simply start discussing anything you have written, and Moodbot is here to discuss for however long you need!</p> 

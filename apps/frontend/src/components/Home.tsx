@@ -11,6 +11,7 @@ import { faBook } from '@fortawesome/free-solid-svg-icons';
 import SentimentCountCard from "./sentimentCount"
 import SentimentTrendsChart from "./sentimentTrendsChart"
 import NumberCard from "./numberCard"
+import HeartAnimation from "./heartAnimation"
 
 interface JournalEntry {
   entryTitle: string;
@@ -70,6 +71,14 @@ function Home() {
     const routeChange = () => {
         navigate("/login")
     }
+
+    const routeChangeChatBot = () => {
+      navigate("/moodbot")
+  }
+
+  const routeChangeTwo = () => {
+    navigate("/signup")
+}
 
     // send open modal, then you also need to handle modal by sending post request to add new question 
     const addNewEntry = () => {
@@ -199,7 +208,7 @@ function Home() {
         height: '600px', /* Fixed height for scroll */
       }}>
         {/* display selected entry */}
-        
+
         {displayedEntry ? (
           <>
              <div className="card" style={{ padding: '10px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
@@ -238,6 +247,13 @@ function Home() {
     <NumberCard sessionCount={sessionCount}/> 
     </div>
 
+    <div style={{padding: "20px"}}>
+          <h5> Looking for an outside opinion? Discuss your entries with Moodbot. </h5> 
+        <Button className="primary" onClick={routeChangeChatBot} style={{ marginBottom: '20px', width: '200px'}}>
+          Discuss with MoodBot
+        </Button>  
+        </div> 
+
     </div> 
     </div> 
     </div> 
@@ -272,26 +288,54 @@ function Home() {
       }}>
 
 
-    <div style={{ display: 'flex', flexDirection: 'row', gap: '20px', marginTop: '20px', width: '90%', maxWidth: '1200px' }}>
-      <div className="newPane" style={{ 
-        flex: 1, 
-        backgroundColor: '#fff', 
-        padding: '20px', 
-        boxShadow: '0 2px 4px rgba(0,0,0,0.1)', 
-        overflowY: 'auto', /* if there are many entries, enable scrolling */
-        height: '600px', /* Fixed height for scroll */
-      }}>
+<div style={{
+  display: 'flex',
+  flexDirection: 'row',
+  gap: '20px',
+  marginTop: '20px',
+  width: '90%',
+  maxWidth: '1200px',
+  margin: 'auto'  // Centers the content horizontally
+}}>
+  <div className="newPane" style={{ 
+    flex: 1, 
+    backgroundColor: '#f7f7f7', // Soft gray background for easier reading
+    padding: '100px', 
+    boxShadow: '0 2px 5px rgba(0,0,0,0.15)', // Softer shadow
+    borderRadius: '8px', // Rounded corners
+    overflowY: 'auto',
+    height: '600px'
+  }}>
 
-<Button className="primary" onClick={routeChange} style={{ marginBottom: '20px', width: '200px' }}>
-          Log in to start journaling!
-        </Button>    
-  
-      <h4> What is MoodScribe? </h4> 
-                   <p> MoodScribe is here to help you be more in-tune with your emotions. Unlike other journaling apps, it can help you identify
-                    your emotional triggers by identifying negative and positive words in your writings. It also shows you summary graphs, 
-                    so you can see how your emotions have changed over time! </p>
-        </div>
-        </div>  
+    <Button className="btn btn-primary" style={{
+    }} onClick={routeChange}>
+      Log in to start journaling!
+    </Button>  
+
+    <Button className="btn btn-info" style={{color: "white"
+    }} onClick={routeChangeTwo}>
+      First time? Sign up now!
+    </Button>  
+
+    <HeartAnimation/> 
+
+    <h4 style={{
+      textAlign: 'center',
+      color: '#333',
+      fontSize: '24px',
+      fontWeight: '600'
+    }}>What is MoodScribe?</h4> 
+    <p style={{
+      color: '#666',
+      fontSize: '16px',
+      lineHeight: '1.6',
+      textAlign: 'justify'
+    }}>MoodScribe is here to help you be <b> more in-tune with your emotions </b>. Unlike other journaling apps, it can help you identify
+      your emotional triggers by <b> identifying negative and positive words </b>  in your writings. It also shows you summary graphs, 
+      so you can see how your emotions have changed over time!</p>
+  </div>
+</div>
+
         </div> 
         </div> 
         </>

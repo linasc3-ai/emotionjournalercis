@@ -9,6 +9,7 @@ import SentimentCard from './sentimentCard'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBook } from '@fortawesome/free-solid-svg-icons';
 import SentimentCountCard from "./sentimentCount"
+import SentimentTrendsChart from "./sentimentTrendsChart"
 
 interface JournalEntry {
   entryTitle: string;
@@ -163,10 +164,11 @@ function Home() {
                             <div className="card" style={{ padding: '10px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
                                 <h3>{entry.entryTitle}</h3>
                                 <p>{new Date(entry.entryDate).toLocaleDateString()} - by {entry.author}</p>
-                                <div style={{ marginTop: '10px', fontWeight: 'bold' }}>
-                                <SentimentCard sentimentName={entry.general_sentiment} percentage={entry.general_sentiment_rate} color={getColor(entry.general_sentiment)} />
+                                <div style={{ marginTop: '10px', fontWeight: 'bold', overflow: 'hidden' }}>
+    <SentimentCard sentimentName={entry.general_sentiment} percentage={entry.general_sentiment_rate} color={getColor(entry.general_sentiment)} />
+</div>
+
                                 </div>
-                            </div>
                         </li>
                     ))}
                 </ul>
@@ -210,7 +212,10 @@ function Home() {
                                 <div style={{ marginTop: '30px' }}>
                                   <h5> <em> Overall Entry Sentiment </em> </h5> 
                                   <p> This tells you how positive or negative this journal entry is! </p> 
-                                <SentimentCard sentimentName={displayedEntry.general_sentiment} percentage={displayedEntry.general_sentiment_rate} color={getColor(displayedEntry.general_sentiment)} />
+                                  <div className="card-content" style={{ padding: '10px', overflow: 'hidden' }}>
+    <SentimentCard sentimentName={displayedEntry.general_sentiment} percentage={displayedEntry.general_sentiment_rate} color={getColor(displayedEntry.general_sentiment)} />
+</div>
+
                                 </div>
                             </div>
           </>
@@ -218,6 +223,7 @@ function Home() {
 
       {/* also in right pane, let's display chart of emotions over time */}
     <SentimentCountCard />
+    <SentimentTrendsChart /> 
 
     </div> 
     </div> 

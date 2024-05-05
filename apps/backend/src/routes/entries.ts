@@ -161,4 +161,34 @@ router.get('/sentiment-count', async (req, res, next) => {
     }
 });
 
+// pull all rate data over time 
+// Aggregate emotion rates over time
+router.get('/sentiment-trends', async (req, res, next) => {
+    try {
+        // use the aggregate mongodb function to aggregate by positive, negative, neutral 
+        const trendData = await JournalEntry.aggregate([
+            // group by general_sentiment and date so we can get data over time 
+            {
+                $group: {
+                    _id: {
+                        date: { $dateToString: { format: "%Y-%m-%d", date: "$entryDate" } },
+                        sentiment: "$general_sentiment"
+                    },
+                    averageRate: { $avg: "$general_sentiment_rate" }
+                    // take the average of the general sentiment rate for each category (pos, neg, neutral)
+                }
+            },
+            { // sort by date 
+                $sort: { "_id.date": 1 }
+            }
+        ]);
+        // send this trend data 
+        res.status(200).json(trendData);
+    } catch (error) {
+        console.error('Error getting sentiment trends:', error);
+        next(error);
+    }
+});
+
+
 export default router;

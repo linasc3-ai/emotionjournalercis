@@ -75,7 +75,11 @@ const SentimentCountCard = () => {
 
     // constantly fetch data 
     useEffect(() => {
-        fetchData();
+        const intervalId = setInterval(() => {
+            fetchData();  
+        }, 2000); // call fetch function at interval of 2000 milliseconds (2 seconds)
+    
+        return () => clearInterval(intervalId);  // Clear the interval when the component unmounts
     }, []);
 
     // return a bar chart 

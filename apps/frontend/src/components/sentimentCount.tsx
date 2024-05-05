@@ -91,6 +91,7 @@ const SentimentCountCard = () => {
         <div style={{ width: '400px', height: '300px', margin: '20px auto' }}>
             <h3> Journal Summary </h3> 
             <p> These charts show your emotion data over time. </p> 
+            <h4>Total Amount of Each Emotion </h4>
             <Bar ref={chartRef} data={chartData} options={{  scales: {
                         y: {
                             beginAtZero: true

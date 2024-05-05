@@ -86,7 +86,7 @@ function Home() {
 
 
 
-    // retrieve JSON of question objects 
+    // retrieve JSON of entries objects 
     const fetcher = async (url: string) => {
         const res = await axios.get(url);
         return res.data;
@@ -219,11 +219,15 @@ function Home() {
                                 </div>
                             </div>
           </>
-        ) : "Click a question to view details."}
+        ) : "Click an entry to view further emotion details."}
 
       {/* also in right pane, let's display chart of emotions over time */}
+    <div style={{padding: "20px"}}>
     <SentimentCountCard />
-    <SentimentTrendsChart /> 
+    </div> 
+    <div style={{padding: "20px"}}>
+    <SentimentTrendsChart/> 
+    </div> 
 
     </div> 
     </div> 
@@ -239,7 +243,7 @@ function Home() {
     <div className="header" style={{ 
       width: '100%', 
       padding: '20px', 
-      backgroundColor: '#A94064', 
+      backgroundColor: '#0A2472', 
       boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
       color: "white", 
       textAlign: 'center' 
@@ -260,7 +264,7 @@ function Home() {
 
 
     <div style={{ display: 'flex', flexDirection: 'row', gap: '20px', marginTop: '20px', width: '90%', maxWidth: '1200px' }}>
-      <div className='left-pane' style={{ 
+      <div className="newPane" style={{ 
         flex: 1, 
         backgroundColor: '#fff', 
         padding: '20px', 
@@ -269,40 +273,16 @@ function Home() {
         height: '600px', /* Fixed height for scroll */
       }}>
 
-<Button variant="primary" onClick={routeChange} style={{ marginBottom: '20px', width: '200px' }}>
+<Button className="primary" onClick={routeChange} style={{ marginBottom: '20px', width: '200px' }}>
           Log in to start journaling!
-        </Button>
-
-        {data && data.length > 0 ? (
-          <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '10px' }}>
-            {data.map((entry) => (
-              // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
-              <div key={entry.id} className="card" style={{ padding: '20px', width: '200px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)', cursor: 'pointer'}} onClick={() => handleCardClick(entry)}>
-                <h5 className="card-title">{entry.entryText}</h5>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p>No entries yet. Log in to start journaling!</p>
-        )}
-    </div> 
-        {/* conditionally display based on which question selected 
-        if there is something selected, display it, otherwise tell them to select */}
-        <div className="right-pane" style={{ 
-      flex: '1', 
-      backgroundColor: '#fff', 
-      padding: '20px', 
-      overflowY: 'auto' /* if content is too long, enable scrolling */
-    }}>
-                    {displayedEntry ? (
-                        <div className="card">
-                          <h5 className="card-title">{displayedEntry.entryTitle}</h5>
-              <p><em>Author:</em> {displayedEntry.author}</p>
-              <p>{displayedEntry.entryText}</p>
-                        </div>
-                    ) : "Click a question to view details."}
+        </Button>    
+  
+      <h4> What is MoodScribe? </h4> 
+                   <p> MoodScribe is here to help you be more in-tune with your emotions. Unlike other journaling apps, it can help you identify
+                    your emotional triggers by identifying negative and positive words in your writings. It also shows you summary graphs, 
+                    so you can see how your emotions have changed over time! </p>
         </div>
-        </div> 
+        </div>  
         </div> 
         </div> 
         </>

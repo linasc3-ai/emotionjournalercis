@@ -72,7 +72,11 @@ const SentimentTrendsChart = () => {
     };
 
     useEffect(() => {
-        fetchData();
+        const intervalId = setInterval(() => {
+            fetchData();  
+        }, 2000); // call fetch function at interval of 2000 milliseconds (2 seconds)
+    
+        return () => clearInterval(intervalId);  // Clear the interval when the component unmounts
     }, []);
 
     useEffect(() => {
@@ -89,7 +93,7 @@ const SentimentTrendsChart = () => {
     // use legend 
     return (
         <div>
-            <h3>Sentiment Trends Over Time</h3>
+            <h4>Sentiment Trends Over Time</h4>
             <p> This chart displays the average emotion severity rate for each emotion across days. </p> 
             {chartData.datasets.length > 0 ? (
                 <Line data={chartData} options={{

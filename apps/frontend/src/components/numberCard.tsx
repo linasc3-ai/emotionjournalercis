@@ -2,7 +2,7 @@ import React from 'react';
 
 // recieve a number of journal sessions as a props 
 // eslint-disable-next-line react/prop-types
-function NumberCard({ sessionCount }) {
+function NumberCard({ count }) {
     return (
         <div style={{
             display: 'flex',
@@ -22,7 +22,7 @@ function NumberCard({ sessionCount }) {
               fontSize: '24px',
               color: '#333'
             }}>
-        <p> {sessionCount} Sessions </p> 
+        <p> {count} Sessions </p> 
         </div> 
       </div>
     );

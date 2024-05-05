@@ -187,6 +187,25 @@ router.get('/sentiment-trends', requireAuth, async (req, res, next) => {
     }
 });
 
+// Route to get the count of journal entries for the current logged-in user
+router.get('/entry-count', requireAuth, async (req, res, next) => {
+    const author = req.session?.user?.username; // Get the username from the session
+
+    if (!author) {
+        // If somehow the session doesn't have the user (which shouldn't happen due to requireAuth middleware), return an error
+        return res.status(403).send({ message: "No user logged in or session expired." });
+    }
+
+    try {
+        const entryCount = await JournalEntry.countDocuments({ author: author });
+        res.status(200).json({ count: entryCount });
+    } catch (error) {
+        console.error('Error getting entry count:', error);
+        next(error);
+    }
+});
+
+
 
 
 export default router;

@@ -1,5 +1,5 @@
 import Button from 'react-bootstrap/Button';
-import { useNavigate, useLocation } from 'react-router-dom'; 
+import { useNavigate } from 'react-router-dom'; 
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import useSWR from 'swr';
@@ -42,13 +42,14 @@ function Home() {
 
     // state for username 
     const [usersName, setUsersName] = useState("");
+    const [count, setCount] = useState(0);
 
     const navigate = useNavigate(); 
 
     // receive number of ession counts from chatbot 
-    const location = useLocation();
+    // const location = useLocation();
     //const sessionCount = location.state ? location.state.sessionCount : 0;
-    const { sessionCount } = location.state || {}; 
+    // const { sessionCount } = location.state || {}; 
     
     // every time page renders, check whether user is logged in 
     // and update state to decide whether or not we should show 
@@ -82,22 +83,13 @@ function Home() {
 }
 
     // send open modal, then you also need to handle modal by sending post request to add new question 
-    const addNewEntry = () => {
+    const addNewEntry = async () => {
         setModalShow(true) // when user clicks button, trigger modal to show 
-    }
-
-    // handle logging out 
-    // const handleLogOut = async () => {
-    //     setLoggedIn(false);
-    //     try {
-    //         const res = await axios.post("/api/account/logout");
-    //         console.log(res);
-    //         console.log(res.data);
-    //     } catch (error) {
-    //         console.error('There was an error!', error);
-    //         setLoggedIn(true);
-    //     }
-    // };
+        await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second (adjust as needed)
+        const response = await axios.get('/api/entries/entry-count');
+        const newCount = response.data.count; 
+        setCount(newCount); 
+    } 
 
     const handleLogOut = async () => {
       try {
@@ -255,7 +247,7 @@ function Home() {
     </div> 
     <div style={{padding: "20px"}}>
     <h5> # Journaling Sessions </h5>
-    <NumberCard sessionCount={sessionCount}/> 
+    <NumberCard count={count}/> 
     </div>
 
     <div style={{padding: "20px"}}>

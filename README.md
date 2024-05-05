@@ -1,4 +1,4 @@
-# Emotion Journaler Cis 
+# Emotion Journaler CIS Final Project 
 
 npm install
 npm run dev
@@ -8,5 +8,4 @@ For ease of the final project grading, they are pushed to repo (I understand in 
 
 Demo video: https://drive.google.com/file/d/1od-N7pzQZgpKFdbxS0CjkbOFcO8q0S7M/view?usp=sharing 
 
-
-
+Deployed link: https://emotionjournalerfinalproj.netlify.app/ 

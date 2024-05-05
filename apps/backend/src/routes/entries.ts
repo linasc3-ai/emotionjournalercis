@@ -65,25 +65,26 @@ router.post('/add', requireAuth, async (req, res, next) => {
 
 
 // route for fetching all journal entries 
-router.get('/fetch', async (req, res, next) => {
-
+// should only fetch entries that correspond w user's username
+router.get('/fetch', requireAuth, async (req, res, next) => {
+    const author = req.session?.user?.username; // Get the username from session
     try { 
-        const entries = await JournalEntry.find({}); // pull anything that is of JournalEntry model 
-        res.status(200).json(entries); // if successful, indicate so by returning all entries in JSON format 
+        const entries = await JournalEntry.find({ author: author }); // Find entries for the logged-in user
+        res.status(200).json(entries);
     } catch (error) { 
-        // if error getting questions, indicate so to user with server side error message 
-        next(error); 
+        next(error);
     }
-}) 
+});
 
 // router for getting emotion data for entry 
 // utilizes EDEN API text sentiment analysis
 // https://app.edenai.run/bricks/text/sentiment-analysis 
 
-router.post('/analysis', async (req, res, next) => {
+router.post('/analysis', requireAuth, async (req, res, next) => {
 
     // need the id to be able to identify which post to add the emotion data to 
     const {entryTitle, entryText} = req.body; 
+    const author = req.session?.user?.username; // Get the username from session
 
     // url is url to which post request is sent 
     // method specifies this is a post request 
@@ -114,11 +115,11 @@ router.post('/analysis', async (req, res, next) => {
 
     try {
         // Find the journal entry by _id
-        const entry = await JournalEntry.findOne({ entryTitle: entryTitle });
+        const entry = await JournalEntry.findOne({ entryTitle: entryTitle, author: author });
 
         // if no journal entry with that ID, send 404 error 
         if (!entry) {
-            return res.status(404).send({ message: "Entry not found." });
+            return res.status(404).send({ message: "Entry not found or you do not have permission to access this entry." });
         }
 
         // Send the request to the sentiment analysis API
@@ -142,19 +143,15 @@ router.post('/analysis', async (req, res, next) => {
 });
 
 // new route to streamline process of getting counts of each type of emotion 
-router.get('/sentiment-count', async (req, res, next) => {
+router.get('/sentiment-count', requireAuth, async (req, res, next) => {
+    const author = req.session?.user?.username; // Get the username from session
     try {
-        // use built in count documents in mongo to count number of entries for each of the 3 sentiment categories 
-        const positiveCount = await JournalEntry.countDocuments({ general_sentiment: 'Positive' });
-        const negativeCount = await JournalEntry.countDocuments({ general_sentiment: 'Negative' });
-        const neutralCount = await JournalEntry.countDocuments({ general_sentiment: 'Neutral' });
-
-        // send this data back to frontend 
-        res.status(200).json({
-            positive: positiveCount,
-            negative: negativeCount,
-            neutral: neutralCount
-        });
+         // use built in count documents in mongo to count number of entries for each of the 3 sentiment categories 
+        const positiveCount = await JournalEntry.countDocuments({ general_sentiment: 'Positive', author: author });
+        const negativeCount = await JournalEntry.countDocuments({ general_sentiment: 'Negative', author: author });
+        const neutralCount = await JournalEntry.countDocuments({ general_sentiment: 'Neutral', author: author });
+ // send this data back to frontend 
+        res.status(200).json({ positive: positiveCount, negative: negativeCount, neutral: neutralCount });
     } catch (error) {
         console.error('Error getting sentiment counts:', error);
         next(error);
@@ -163,24 +160,24 @@ router.get('/sentiment-count', async (req, res, next) => {
 
 // pull all rate data over time 
 // Aggregate emotion rates over time
-router.get('/sentiment-trends', async (req, res, next) => {
+router.get('/sentiment-trends', requireAuth, async (req, res, next) => {
+    const author = req.session?.user?.username; // Get the username from session
     try {
-        // use the aggregate mongodb function to aggregate by positive, negative, neutral 
+         // use the aggregate mongodb function to aggregate by positive, negative, neutral 
         const trendData = await JournalEntry.aggregate([
-            // group by general_sentiment and date so we can get data over time 
-            {
+            { $match: { author: author } }, // Filter to include only the current user's entries
+            { // group by general_sentiment and date so we can get data over time 
                 $group: {
                     _id: {
                         date: { $dateToString: { format: "%Y-%m-%d", date: "$entryDate" } },
                         sentiment: "$general_sentiment"
                     },
                     averageRate: { $avg: "$general_sentiment_rate" }
-                    // take the average of the general sentiment rate for each category (pos, neg, neutral)
+                     // take the average of the general sentiment rate for each category (pos, neg, neutral)
                 }
             },
-            { // sort by date 
-                $sort: { "_id.date": 1 }
-            }
+            // sort by date 
+            { $sort: { "_id.date": 1 } }
         ]);
         // send this trend data 
         res.status(200).json(trendData);
@@ -189,6 +186,7 @@ router.get('/sentiment-trends', async (req, res, next) => {
         next(error);
     }
 });
+
 
 
 export default router;

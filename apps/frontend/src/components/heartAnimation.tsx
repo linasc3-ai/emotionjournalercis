@@ -45,7 +45,9 @@ function HeartAnimation() {
 
         // Cleanup function to remove renderer
         return () => {
-            mountRef.current.removeChild(renderer.domElement);
+            if (mountRef.current && renderer.domElement.parentNode) {
+                mountRef.current.removeChild(renderer.domElement);
+            }
         };
     }, []);
 

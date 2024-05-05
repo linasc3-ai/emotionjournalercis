@@ -23,10 +23,9 @@ function Chatbot() {
     const [sessionCount, setCount] = useState(0);
 
     const routeChange = () => {
-        const newCount = sessionCount + 1;  // Calculate the new count first
-    setCount(newCount);
-        // setCount(sessionCount+1) // update the count 
-        navigate("/", {state: sessionCount}) // send count back so we can display it 
+        const newCount = sessionCount + 1; 
+        setCount(newCount); // update the count 
+        navigate("/", { state: { sessionCount: newCount } });// send count back so we can display it 
     }
 
     const { data, error, isValidating } = useSWR('/api/entries/fetch', fetcher, { revalidateOnFocus: false });
@@ -34,14 +33,6 @@ function Chatbot() {
     function fetcher(url) {
         return axios.get(url).then(res => res.data);
     }
-
-    // const [messages, setMessages] = useState([{
-    //     // array contains a message and sender 
-    //     message: "Hello, I am MoodBot!",
-    //     sender: "ChatGPT",
-    //     direction: MessageDirection.Outgoing, 
-    //     position: "single"
-    // }]) // messages stored in array 
 
     const apiKey = "sk-proj-gKQAIgiuVYYkf6bWhXIlT3BlbkFJ6Kkc1Z3qG6S9qMqM8eqs"
     const [typing, setTyping] = useState(false)

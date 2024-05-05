@@ -47,8 +47,9 @@ function Home() {
 
     // receive number of ession counts from chatbot 
     const location = useLocation();
-    const sessionCount = location.state || 0;
-
+    //const sessionCount = location.state ? location.state.sessionCount : 0;
+    const { sessionCount } = location.state || {}; 
+    
     // every time page renders, check whether user is logged in 
     // and update state to decide whether or not we should show 
     // certain view 
@@ -86,17 +87,29 @@ function Home() {
     }
 
     // handle logging out 
+    // const handleLogOut = async () => {
+    //     setLoggedIn(false);
+    //     try {
+    //         const res = await axios.post("/api/account/logout");
+    //         console.log(res);
+    //         console.log(res.data);
+    //     } catch (error) {
+    //         console.error('There was an error!', error);
+    //         setLoggedIn(true);
+    //     }
+    // };
+
     const handleLogOut = async () => {
-        setLoggedIn(false);
-        try {
-            const res = await axios.post("/api/account/logout");
-            console.log(res);
-            console.log(res.data);
-        } catch (error) {
-            console.error('There was an error!', error);
-            setLoggedIn(true);
-        }
-    };
+      try {
+          const res = await axios.post("/api/account/logout");
+          console.log(res.data);
+          setLoggedIn(false);
+          navigate("/login");  // Redirect to login or home for logged-out users
+      } catch (error) {
+          console.error('There was an error!', error);
+          // Optionally set loggedIn to true only on error if needed, but usually it should remain false.
+      }
+  };
 
 
 

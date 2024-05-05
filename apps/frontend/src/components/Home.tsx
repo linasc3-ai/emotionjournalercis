@@ -1,5 +1,5 @@
 import Button from 'react-bootstrap/Button';
-import { useNavigate } from 'react-router-dom'; 
+import { useNavigate, useLocation } from 'react-router-dom'; 
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import useSWR from 'swr';
@@ -10,6 +10,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBook } from '@fortawesome/free-solid-svg-icons';
 import SentimentCountCard from "./sentimentCount"
 import SentimentTrendsChart from "./sentimentTrendsChart"
+import NumberCard from "./numberCard"
 
 interface JournalEntry {
   entryTitle: string;
@@ -42,6 +43,10 @@ function Home() {
     const [usersName, setUsersName] = useState("");
 
     const navigate = useNavigate(); 
+
+    // receive number of ession counts from chatbot 
+    const location = useLocation();
+    const sessionCount = location.state || 0;
 
     // every time page renders, check whether user is logged in 
     // and update state to decide whether or not we should show 
@@ -228,6 +233,10 @@ function Home() {
     <div style={{padding: "20px"}}>
     <SentimentTrendsChart/> 
     </div> 
+    <div style={{padding: "20px"}}>
+    <h5> # Journaling Sessions </h5>
+    <NumberCard sessionCount={sessionCount}/> 
+    </div>
 
     </div> 
     </div> 

@@ -1,27 +1,48 @@
 // use npm install @chatscope/chat-ui-kit-react to build out UI interface for chatbot
 import axios from 'axios';
-import {useState} from 'react';
+import { useNavigate } from 'react-router-dom'; 
+import {useState, useEffect} from 'react';
 import useSWR from 'swr';
 import '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css'; // import chatbot styling 
 // import specific UI elements 
 import {MainContainer, ChatContainer, MessageList, Message, MessageInput, TypingIndicator} from '@chatscope/chat-ui-kit-react'
 import {MessageDirection} from "@chatscope/use-chat";
 import process from 'process';
+import Button from 'react-bootstrap/Button';
 
 window.process = process;
 
 function Chatbot() {
-    // states
-    const [messages, setMessages] = useState([{
-        // array contains a message and sender 
-        message: "Hello, I am MoodBot!",
-        sender: "ChatGPT",
-        direction: MessageDirection.Outgoing, 
-        position: "single"
-    }]) // messages stored in array 
 
-    const apiKey = process.env.REACT_APP_API_KEY
-    console.log(apiKey)
+    const navigate = useNavigate(); 
+
+    // Use SWR's isLoading or error for Conditional Rendering: to control the rendering logic.
+    
+    // states
+    const [messages, setMessages] = useState([]);
+    const [sessionCount, setCount] = useState(0);
+
+    const routeChange = () => {
+        setCount(sessionCount+1) // update the count 
+        navigate("/", {state: sessionCount}) // send count back so we can display it 
+    }
+
+
+    const { data, error, isValidating } = useSWR('/api/entries/fetch', fetcher, { revalidateOnFocus: false });
+
+    function fetcher(url) {
+        return axios.get(url).then(res => res.data);
+    }
+
+    // const [messages, setMessages] = useState([{
+    //     // array contains a message and sender 
+    //     message: "Hello, I am MoodBot!",
+    //     sender: "ChatGPT",
+    //     direction: MessageDirection.Outgoing, 
+    //     position: "single"
+    // }]) // messages stored in array 
+
+    const apiKey = "sk-proj-pfQlTgSMStaSK907DKzsT3BlbkFJB0e4gZnmA0DRarWOF1zO"
     const [typing, setTyping] = useState(false)
 
     // wait for message 
@@ -48,16 +69,31 @@ function Chatbot() {
         await processMessageToChatGPT(newMessages); 
     }
 
+    useEffect(() => {
+        if (data && !isValidating) {
+            // Setup your chat with initial data
+            const initialMessage = {
+                message: "Hello, I am MoodBot!",
+                sender: "ChatGPT",
+                direction: MessageDirection.Outgoing, 
+                position: "single"
+            };
+            setMessages([initialMessage]);
+        }
+    }, [data, isValidating]);
 
-    // retrieve JSON of entries objects to pass into gpt 
-    const fetcher = async (url: string) => {
-        const res = await axios.get(url);
-        return res.data;
-      };
+    if (error) return <div>Error getting entries...</div>;
+    if (!data || isValidating) return <div>Loading...</div>;
 
-    // destructure JSON object to retrieve data returned from fetcher 
-    const { data } = useSWR('/api/entries/fetch', fetcher, { refreshInterval: 2000 })
+    // // retrieve JSON of entries objects to pass into gpt 
+    // const fetcher = async (url: string) => {
+    //     const res = await axios.get(url);
+    //     return res.data;
+    //   };
 
+    // // destructure JSON object to retrieve data returned from fetcher 
+    // const { data } = useSWR('/api/entries/fetch', fetcher, { refreshInterval: 2000 })
+    // console.log(data)
 
     // pass in all messages from chat
     // update here to pass in all journal entry content 
@@ -76,10 +112,9 @@ function Chatbot() {
             content: `Act like a mental health therapist using your knowledge of this persons past journal entries ${data}`
              // prompt that defines how language comes out of chatgpt
         }
-
         
         const apiRequestBody = {
-            "model": "gpt-3.5.-turbo",
+            "model": "gpt-3.5-turbo",
             "messages": [
                 systemMessage, // put system message in front of all messages so it always has that context 
                 ...apiMessages // contains all the messages 
@@ -122,6 +157,11 @@ function Chatbot() {
         <h2> Welcome to Moodbot! </h2> 
         <p> Moodbot is here to help you better reflect on what you have written in your journal entries. </p> 
         <p> Simply start discussing anything you have written, and Moodbot is here to discuss for however long you need!</p> 
+
+        <Button className="primary" onClick={routeChange} style={{ marginBottom: '20px', width: '200px' }}>
+          Done Journaling 
+        </Button>   
+
         <MainContainer> 
             <ChatContainer> 
                 <MessageList

@@ -34,7 +34,7 @@ function Chatbot() {
         return axios.get(url).then(res => res.data);
     }
 
-    const apiKey = "sk-proj-oKEaTmkQWzEKfseVcYvHT3BlbkFJtO4JCwhIp8RyHFqi7SxB"
+    const apiKey = "sk-proj-BPZVYdwzjzn2WQ3ibWSVT3BlbkFJrLPWyiUEGvfwVFhE8Eiy"
     const [typing, setTyping] = useState(false)
 
     // wait for message 

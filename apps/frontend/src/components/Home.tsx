@@ -85,7 +85,6 @@ function Home() {
     // send open modal, then you also need to handle modal by sending post request to add new question 
     const addNewEntry = async () => {
         setModalShow(true) // when user clicks button, trigger modal to show 
-        await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second (adjust as needed)
         const response = await axios.get('/api/entries/entry-count');
         const newCount = response.data.count; 
         setCount(newCount); 

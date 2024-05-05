@@ -111,8 +111,6 @@ function Home() {
       }
   };
 
-
-
     // retrieve JSON of entries objects 
     const fetcher = async (url: string) => {
         const res = await axios.get(url);

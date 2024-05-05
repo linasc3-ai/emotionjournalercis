@@ -57,7 +57,7 @@ function HeartAnimation() {
             justifyContent: 'center',
             alignItems: 'center',
             height: '35vh', 
-            width: '63vw'   
+            width: '55vw'   
         }} />
     );
 }

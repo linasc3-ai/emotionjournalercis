@@ -38,7 +38,7 @@ function Login() {
     }
 
   return (
-    <div className="Login" style={{backgroundColor: "#e75480", padding: '500px', color: "white"}}> 
+    <div className="Login" style={{backgroundColor: "lightblue", padding: '500px', color: "white"}}> 
     <><h1 style={{marginBottom: '10px'}}> Log In </h1>
     <Form onSubmit={handleSubmit}>
           <Form.Group className="mb-3" controlId="formBasicEmail">

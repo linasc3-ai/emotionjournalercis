@@ -42,7 +42,7 @@ function SignUp() {
     }
 
   return (
-    <div className="SignUp" style={{backgroundColor: "#e75480", padding: '500px', color: "white"}}> 
+    <div className="SignUp" style={{backgroundColor: "lightblue", padding: '500px', color: "white"}}> 
     <><h1 style={{padding: "15px"}}> Sign Up </h1>
     <Form onSubmit={handleSubmit}>
           <Form.Group className="mb-3" controlId="formBasicEmail">
